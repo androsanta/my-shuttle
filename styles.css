@@ -1,0 +1,103 @@
+div.container {
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  position: absolute;
+}
+
+div.header {
+  width: 100%;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #282828;
+}
+
+div.title {
+  padding-left: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: row;
+}
+
+h2.headerColored { color: #00abff; }
+
+h2.header { color: white; }
+
+form.login {
+  padding-right: 20px;
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  justify-content: center;
+}
+
+div.email, div.password { padding-right: 15px; }
+
+input.email, input.password {
+  width: 150px;
+  height: 25px;
+  border-radius: 4px;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  border: none;
+  font-size: 15px;
+  padding-left: 5px;
+}
+
+input.submit, input.logout {
+  width: 100px;
+  height: 25px;
+  background-color: #00abff;
+  color: white;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  border-radius: 4px;
+  border: none;
+  font-size: 15px;
+}
+
+div.welcome {
+  padding-right: 20px;
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  justify-content: center;
+}
+
+h3.welcome { color: white  }
+h3.welcomeColored {
+  color: #00abff;
+  padding-left: 10px;
+  padding-right: 30px;
+}
+
+div.sidebar {
+  left: 0;
+  height: 100%;
+  width: 190px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  flex-direction: column;
+  background-color: #3e454c;
+}
+
+input.menuEntry {
+  width: 100px;
+  height: 25px;
+  background-color: white;
+  color: #00abff;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  border-radius: 4px;
+  border: none;
+  font-size: 15px;
+}
+
+form.menuEntry {
+  padding-top: 20px;
+}
