@@ -13,7 +13,6 @@ $(document).ready(function () {
 
   // handle
   $("form.signup").submit(function (event) {
-    console.log('dio bonooo')
-    event.preventDefault()
+    // event.preventDefault()
   })
 })

@@ -1,12 +1,15 @@
-<?php include("common.php"); ?>
+<?php include("entryPoint.php"); ?>
 <!DOCTYPE html>
 <html>
 <head>
   <title>My Shuttle</title>
+  <!--
   <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  -->
+  <script type="text/javascript" src="jquery-1.7.2.js"></script>
   <script type="text/javascript" src="common.js"></script>
-  <?php if ($wrongCredentials)
-    echo '<script type="text/javascript">alert("Wrong credentials")</script>';
+  <?php if ($userError)
+    echo '<script type="text/javascript">alert("' . $errorMessage . '")</script>';
   ?>
   <link href="styles.css" rel="stylesheet" />
 </head>
@@ -33,7 +36,7 @@
       <div class="welcome">
         <h3 class="welcome">Welcome</h3>
         <?php echo '<h3 class="welcomeColored">'.$_SESSION['email'].'</h3>'; ?>
-        <form action="my_shuttle.php?action=logout" method="GET">
+        <form action="my_shuttle.php?action=logout" method="POST">
           <input type="submit" name="logout" value="Logout" class="logout" />
         </form>
       </div>
@@ -41,14 +44,33 @@
 
   </div>
 
-  <!-- Sidebar -->
-  <div class="sidebar">
-    <form action="my_shuttle.php?action=signup" method="GET" class="menuEntry">
-      <input type="submit" name="signup" value="Signup" class="menuEntry" />
-    </form>
-    <form action="phpinfo.php" method="GET" class="menuEntry">
-      <input type="submit" name="phpinfo" value="Phpinfo" class="menuEntry" />
-    </form>
+  <div class="content">
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <form action="phpinfo.php" method="GET" class="menuEntry">
+        <input type="submit" name="phpinfo" value="Phpinfo" class="menuEntry" />
+      </form>
+    </div>
+
+    <?php if (!$isLogged): ?>
+    <!-- Signup form -->
+    <div class="signup">
+      <div class="signupContent">
+        <h2 style="color: white">Don't have an account? Signup!</h2>
+        <form action="my_shuttle.php?action=signup" method="POST" class="signup">
+        <div class="email">
+          <input id="email" type="text" name="email" placeholder="Email" class="email">
+        </div>
+        <div class="password">
+          <input id="psw" type="password" name="password" class="password" placeholder="Password">
+        </div>
+        <input type="submit" name="signup" value="Signup" class="submit" />
+      </form>
+      </div>
+    </div>
+  <?php endif; ?>
+
   </div>
 
   </div>

@@ -101,3 +101,36 @@ input.menuEntry {
 form.menuEntry {
   padding-top: 20px;
 }
+
+form.signup {
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  justify-content: center;
+}
+
+div.signupContent {
+  height: 120px;
+  width: 70%;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  background-color: #2b3035;
+  border-radius: 4px;
+}
+
+div.content {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  align-items: flex-start;
+}
+
+div.signup {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  justify-content: space-around;
+  padding-top: 40px;
+}
