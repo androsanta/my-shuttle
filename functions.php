@@ -1,14 +1,52 @@
 <?php
+  // Validation functions
+  function validateEmail ($str) {
+    $re = "/[a-zA-Z0-9]+\@[a-zA-Z0-9]+\.[a-zA-Z0-9]+/";
+    return preg_match($re, $str);
+  }
+
+  function validatePassword ($str) {
+    $lower = "/[a-z]+/";
+    $upper = "/[A-Z]+/";
+    $digit = "/[0-9]+/";
+    echo preg_match($upper, $str);
+    return preg_match($lower, $str) && (preg_match($upper, $str) || preg_match($digit, $str));
+  }
 
   // Login
   function login () {
     // global $isLogged; // actually not used 
     // global $wrongCredentials;
 
+    $email = $_POST['email'];
+    $password = $_POST['password'];
+
+    // check for email and password format
+    if (!validateEmail($email)) {
+      $_SESSION['isLogged'] = false;
+      $_SESSION['userError'] = true;
+      $_SESSION['errorMessage'] = "Email format is not correct!";
+
+      header('Location: https://' . $_SERVER['HTTP_HOST'] . "/my-shuttle");
+      exit;
+    }
+
+    if (!validatePassword($password)) {
+      $_SESSION['isLogged'] = false;
+      $_SESSION['userError'] = true;
+      $_SESSION['errorMessage'] = "Password format is not correct!";
+
+      header('Location: https://' . $_SERVER['HTTP_HOST'] . "/my-shuttle");
+      exit;
+    }
+
+
+    // connect to database
     $mydb = mysqli_connect('localhost', 'root', '', 'my_shuttle');
 
     if ($mydb) {
-      $query = 'SELECT * FROM users WHERE email = "' . $_POST['email'] . '" AND password = "' . $_POST['password'] . '";';
+      // check for credentials (using sql function md5)
+      $query = 'SELECT * FROM users WHERE email = "' . $email . '" AND password = MD5("' . $password . ')";';
       $res = mysqli_query($mydb, $query);
       mysqli_close($mydb);
 
@@ -17,7 +55,8 @@
       if ($res == true && mysqli_num_rows($res) == 1) {
         $isLogged = true;
         $error = false;
-        $_SESSION['email'] = $_POST['email'];
+        $_SESSION['email'] = $email;
+        mysqi_free_result($res);
       } else {
         $isLogged = false;
         $error = true;
@@ -48,15 +87,39 @@
 
   // Signup
   function signup () {
+    $email = $_POST['email'];
+    $password = $_POST['password'];
+
+    // check for email and password format
+    if (!validateEmail($email)) {
+      $_SESSION['isLogged'] = false;
+      $_SESSION['userError'] = true;
+      $_SESSION['errorMessage'] = "Email format is not correct!";
+
+      header('Location: https://' . $_SERVER['HTTP_HOST'] . "/my-shuttle");
+      exit;
+    }
+
+    if (!validatePassword($password)) {
+      $_SESSION['isLogged'] = false;
+      $_SESSION['userError'] = true;
+      $_SESSION['errorMessage'] = "Password format is not correct!";
+
+      header('Location: https://' . $_SERVER['HTTP_HOST'] . "/my-shuttle");
+      exit;
+    }
+
     $mydb = mysqli_connect('localhost', 'root', '', 'my_shuttle');
 
     if ($mydb) {
       try {
         mysqli_autocommit($mydb, false);
 
-        $query = 'INSERT INTO users (email, password) VALUES("' . $_POST['email'] . '", "' . $_POST['password'] . '");';
-        if (!mysqli_query($mydb, $query))
+        $query = 'INSERT INTO users (email, password) VALUES("' . $email . '", MD5("' . $password . '"));';
+        $res = mysqli_query($mydb, $query);
+        if (!$res)
           throw new Exception("Insertion of new user failed", 1);
+        mysqli_free_result($res);
 
         mysqli_commit($mydb);
 
