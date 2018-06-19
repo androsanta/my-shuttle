@@ -46,7 +46,8 @@
 
     if ($mydb) {
       // check for credentials (using sql function md5)
-      $query = 'SELECT * FROM users WHERE email = "' . $email . '" AND password = MD5("' . $password . ')";';
+      $query = 'SELECT * FROM users WHERE email = "' . $email . '" AND password = MD5("' . $password . '");';
+      echo $query;
       $res = mysqli_query($mydb, $query);
       mysqli_close($mydb);
 
@@ -56,7 +57,7 @@
         $isLogged = true;
         $error = false;
         $_SESSION['email'] = $email;
-        mysqi_free_result($res);
+        mysqli_free_result($res);
       } else {
         $isLogged = false;
         $error = true;

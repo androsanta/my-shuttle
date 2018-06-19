@@ -53,23 +53,33 @@
       </form>
     </div>
 
-    <?php if (!$isLogged): ?>
-    <!-- Signup form -->
-    <div class="signup">
-      <div class="signupContent">
-        <h2 style="color: white">Don't have an account? Signup!</h2>
-        <form action="my_shuttle.php?action=signup" method="POST" class="signup">
-        <div class="email">
-          <input id="emailSignup" type="text" name="email" placeholder="Email" class="email">
+    <!-- Main page content -->
+    <div class="mainView">
+
+      <?php if (!$isLogged): ?>
+      <!-- Signup form -->
+      <div class="signup">
+        <div class="signupContent">
+          <h2 style="color: white">Don't have an account? Signup!</h2>
+          <form action="my_shuttle.php?action=signup" method="POST" class="signup">
+            <div class="email">
+              <input id="emailSignup" type="text" name="email" placeholder="Email" class="email">
+            </div>
+            <div class="password">
+              <input id="pswSignup" type="password" name="password" class="password" placeholder="Password">
+            </div>
+            <input type="submit" name="signup" value="Signup" class="submit" />
+          </form>
         </div>
-        <div class="password">
-          <input id="pswSignup" type="password" name="password" class="password" placeholder="Password">
-        </div>
-        <input type="submit" name="signup" value="Signup" class="submit" />
-      </form>
       </div>
+      <?php endif; ?>
+
+      <!-- Booking overview (without authentication) -->
+      
+
+      <!-- Booking overview after authentication -->
+
     </div>
-  <?php endif; ?>
 
   </div>
 
