@@ -11,11 +11,11 @@
 
   // check for https
   if($_SERVER['SERVER_PORT'] !== 443 && (empty($_SERVER['HTTPS']) || $_SERVER['HTTPS'] === 'off')) {
-    // header('Location: https://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']);
-    // exit;
+    header('Location: https://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']);
+    exit;
   }
 
-  define("BUS_SEATS", 30);
+  define("BUS_SEATS", 20);
   include("functions.php");
 
   /*
@@ -25,12 +25,15 @@
   * login - user that already have an account want to login
   * signup - user does not have an account, signup and login
   * logout - user want to logout 
+  * personalPage - view of booking with user details
   */
-  $action = "home";
+  $action = "";
   $isLogged = false;
 
   $userError = false;
   $errorMessage = '';
+
+  $routing = 'home';
 
 
   if (!empty($_SESSION)) {
@@ -43,6 +46,9 @@
           $userError = $value;
           $_SESSION['userError'] = false;
           $errorMessage = $_SESSION['errorMessage'];
+          break;
+        case 'routing':
+          $routing = $value;
           break;
       }
     }
@@ -69,6 +75,15 @@
     case 'logout':
       logout();
       break;
+    case 'book':
+      if ($isLogged)
+        book();
+      break;
+    case 'home':
+    case 'personalPage':
+      $_SESSION['routing'] = $action;
+      header('Location: https://' . $_SERVER['HTTP_HOST'] . "/my-shuttle");
+      exit;
   }
 
 ?>

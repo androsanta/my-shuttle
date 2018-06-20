@@ -13,6 +13,7 @@
     return preg_match($lower, $str) && (preg_match($upper, $str) || preg_match($digit, $str));
   }
 
+
   // Login
   function login () {
     // global $isLogged; // actually not used 
@@ -57,6 +58,7 @@
         $isLogged = true;
         $error = false;
         $_SESSION['email'] = $email;
+        $_SESSION['routing'] = 'personalPage';
         mysqli_free_result($res);
       } else {
         $isLogged = false;
@@ -79,7 +81,6 @@
     echo "logout";
     session_unset();
     session_destroy();
-    session_start();
     
     header('Location: https://' . $_SERVER['HTTP_HOST'] . "/my-shuttle");
     exit;
@@ -134,9 +135,266 @@
         $_SESSION['errorMessage'] = "Unable to complete signup procedure";
       }
 
+      mysqli_close($mydb);
+
       header('Location: https://' . $_SERVER['HTTP_HOST'] . "/my-shuttle");
       exit;
 
     } else echo "not possible to connect to database";
+  }
+
+
+  function getStops ($db) {
+    $query = "SELECT departure FROM users WHERE departure IS NOT NULL;";
+    $res = mysqli_query($db, $query);
+
+    $dep = array();
+    $dest = array();
+    $stops = array();
+
+    if ($res) {
+      $i = mysqli_num_rows($res);
+      while ($i--) {
+        $el = mysqli_fetch_array($res);
+        array_push($dep, $el[0]);
+      }
+      mysqli_free_result($res);
+    }
+
+    $query = "SELECT destination FROM users WHERE destination IS NOT NULL;";
+    $res = mysqli_query($db, $query);
+
+    if ($res) {
+      $i = mysqli_num_rows($res);
+      while ($i--) {
+        $el = mysqli_fetch_array($res);
+        array_push($dest, $el[0]);
+      }
+      mysqli_free_result($res);
+    }
+
+    $stops = array_unique(array_merge($dep, $dest));
+    asort($stops);
+    return array_values($stops);
+  }
+
+  // get only the number of booking given a departure and a destination (without user details)
+  function getNumberOfBooking ($db, $dep, $dest) {
+    // get how many users will be on the bus during the current stops
+    $query = '
+      SELECT SUM(seats) 
+      FROM users
+      WHERE departure <= "' . $dep . '" AND destination >= "' . $dest . '";
+    ';
+
+    $nBook = "No booking for this trip";
+    $res = mysqli_query($db, $query);
+    if ($res) {
+      $nBook = mysqli_fetch_array($res, MYSQLI_NUM);
+
+      if ($nBook && $nBook != 0)
+        $nBook = $nBook[0];
+      
+      mysqli_free_result($res);
+    }
+
+    return $nBook;
+  }
+
+  // get details about booking given a departure and a destination
+  function getBookingDetails ($db, $dep, $dest) {
+    $query = '
+      SELECT seats, email
+      FROM users
+      WHERE departure <= "' . $dep . '" AND destination >= "' . $dest . '"
+      ORDER BY email;
+    ';
+
+    $details = '';
+    $res = mysqli_query($db, $query);
+
+    if ($res) {
+      $i = mysqli_num_rows($res);
+      if ($i != 0)
+        $details = ' -'; // just to format output
+
+      while ($i--) {
+        $line = mysqli_fetch_array($res, MYSQLI_NUM);
+        $details = $details . "  " . $line[1] . " (" . $line[0] . ")";
+      }
+    }
+
+    return $details;
+  }
+
+  // Print overview of booking
+  function bookOverview ($detailsEnabled) {
+    $mydb = mysqli_connect('localhost', 'root', '', 'my_shuttle');
+
+    if ($mydb) {
+      $stops = getStops($mydb);
+      $n = sizeof($stops);
+      $i = 0;
+
+      $currDeparture = $stops[$i];
+
+      while ($i++ < $n - 1) {
+        $currDestination = $stops[$i];
+
+        $bookInfo = '';
+        if ($detailsEnabled)
+          $bookInfo = getNumberOfBooking($mydb, $currDeparture, $currDestination) . getBookingDetails($mydb, $currDeparture, $currDestination);
+        else
+          $bookInfo = getNumberOfBooking($mydb, $currDeparture, $currDestination);
+
+        echo 
+          '<tr>
+            <td>
+              <div class="tableElement">
+                ' . $currDeparture . '
+              </div>
+            </td>
+            <td>
+              <div class="tableElement">
+                ' . $currDestination . '
+              </div>
+            </td>
+            <td>
+              <div class="tableElement">
+                ' . $bookInfo . '
+              </div>
+            </td>
+          </tr>
+          ';
+
+        $currDeparture = $currDestination;
+      }
+
+      mysqli_close($mydb);
+    } else echo "not possible to connect to database";
+  }
+
+
+  // Book and eventually insert new addresses
+  function book () {
+
+    $departure = $_SESSION['departure'];
+    $destination = $_SESSION['destination'];
+    $seats = $_SESSION['seats'];
+
+    if ($departure >= $destination || $seats < 1 || $seats > BUS_SEATS) {
+      $_SESSION['userError'] = true;
+      $_SESSION['errorMessage'] = "You must insert valid data for stops and seats!";
+      header('Location: https://' . $_SERVER['HTTP_HOST'] . "/my-shuttle");
+      exit;
+    }
+
+
+    $mydb = mysqli_connect('localhost', 'root', '', 'my_shuttle');
+
+    if ($mydb) {
+      try {
+        mysqli_autocommit($mydb, false);
+
+        // select and lock for update only the rows of users
+        // that has a trip that intersect the new trip
+        $query = '
+          SELECT departure, destination, seats
+          FROM users
+          WHERE (departure <= "' . $departure . '" AND destination >= "' . $departure . '")
+            OR (departure <= "' . $destination . '" AND destination >= "' . $destination . '")
+            OR (departure >= "' . $departure . '" AND destination <= "' . $destination . '")
+            OR (departure <= "' . $departure . '" AND destination >= "' . $destination . '")
+          FOR UPDATE;
+        ';
+        $res = mysqli_query($mydb, $query);
+
+        if (!$res)
+          throw new Exception("Unable to execute query " . $query, 1);
+
+        // verify if the new trip exceed the capacity of the bus
+        $n = mysqli_num_rows($res);
+        $i = 0;
+        $entry = array();
+
+        while ($i < $n) {
+          $el = mysqli_fetch_array($res);
+          $entry[$i] = array();
+          $entry[$i][0] = $el[0];
+          $entry[$i][1] = $el[1];
+          $entry[$i][2] = $el[2];
+          $i++;
+        }
+
+
+        $stops = getStops($mydb);
+        $nStop = sizeof($stops);
+        $i = 0;
+
+        $currDeparture = $stops[$i];
+        while ($i++ < $nStop - 1) {
+          $currDestination = $stops[$i];
+          $seatsSum = 0;
+
+
+          $j = 0;
+          while ($j < $n) {
+            if (strcmp($entry[$j][0], $currDeparture) >= 0
+              && strcmp($entry[$j][1], $currDestination) <= 0) {
+              $seatsSum = $seatsSum + $entry[$j][2];
+            }
+          }
+
+          if ($seatsSum > BUS_SEATS) {
+            // return error to user
+          }
+
+          $currDeparture = $currDestination;
+        }
+
+
+        mysqli_free_result($res);
+
+        mysqli_commit($mydb);
+      } catch (Exception $e) {
+        mysqli_rollback($mydb);
+
+        $_SESSION['userError'] = true;
+        $_SESSION['errorMessage'] = "Unable to complete booking procedure";
+      }
+
+      mysqli_close($mydb);
+
+      header('Location: https://' . $_SERVER['HTTP_HOST'] . "/my-shuttle");
+      exit;
+
+    } else echo "not possible to connect to database";
+
+
+    header('Location: https://' . $_SERVER['HTTP_HOST'] . "/my-shuttle");
+    exit;
+  }
+
+  function printStops () {
+    $mydb = mysqli_connect('localhost', 'root', '', 'my_shuttle');
+
+    if ($mydb) {
+      $arr = getStops($mydb);
+
+      $n = sizeof($arr);
+      $i = 0;
+      while ($i < $n)
+        echo '<option value="' . $arr[$i++] . '"></option>';
+
+      mysqli_close($mydb);
+    } else echo "not possible to connect to database";
+  }
+
+  function printSeats () {
+    $i = 1;
+    while ($i <= BUS_SEATS) {
+      echo '<option value="' . $i . '"></option>';
+      $i++;
+    }
   }
 ?>

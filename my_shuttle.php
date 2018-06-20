@@ -48,6 +48,14 @@
 
     <!-- Sidebar -->
     <div class="sidebar">
+      <form action="my_shuttle.php?action=home" method="POST" class="menuEntry">
+        <input type="submit" name="routing" value="Home" class="menuEntry" />
+      </form>
+      <?php if ($isLogged): ?>
+        <form action="my_shuttle.php?action=personalPage" method="POST" class="menuEntry">
+          <input type="submit" name="routing" value="Personal" class="menuEntry" />
+        </form>
+      <?php endif; ?>
       <form action="phpinfo.php" method="GET" class="menuEntry">
         <input type="submit" name="phpinfo" value="Phpinfo" class="menuEntry" />
       </form>
@@ -58,7 +66,7 @@
 
       <?php if (!$isLogged): ?>
       <!-- Signup form -->
-      <div class="signup">
+      <div class="contentContainer">
         <div class="signupContent">
           <h2 style="color: white">Don't have an account? Signup!</h2>
           <form action="my_shuttle.php?action=signup" method="POST" class="signup">
@@ -74,10 +82,51 @@
       </div>
       <?php endif; ?>
 
-      <!-- Booking overview (without authentication) -->
-      
+      <!-- Booking overview -->
+      <div class="contentContainer">
+        <div class="overviewContainer">
+          <div class="tableContainer">
+            <table style="width: 90%;">
+              <tr>
+                <th><h3 class="tableHeader">Departure<h3></th>
+                <th><h3 class="tableHeader">Destination<h3></th>
+                <th><h3 class="tableHeader">Bookings<h3></th>
+              </tr>
+              <?php bookOverview($isLogged && $routing == 'personalPage') ?>
+            </table>
+          </div>
+        </div>
+      </div>
 
-      <!-- Booking overview after authentication -->
+      <!-- Booking form -->
+      <?php if ($isLogged && $routing == 'personalPage'): ?>
+        <div class="contentContainer">
+          <div class="bookContent">
+            <h3 style="color: #00abff">Book for a trip!</h2>
+            <form action="my_shuttle.php?action=book" method="POST" class="book">
+              <div class="bookInput">
+                <input list="departure" type="text" name="departure" placeholder="Departure" class="book">
+                <datalist id="departure">
+                  <?php printStops() ?>
+                </datalist>
+              </div>
+              <div class="bookInput">
+                <input list="destination" type="text" name="destination" class="book" placeholder="Destination">
+                <datalist id="destination">
+                  <?php printStops() ?>
+                </datalist>
+              </div>
+              <div class="bookInput">
+                <input list="seats" type="text" name="seats" class="bookSmall" placeholder="Seats">
+                <datalist id="seats">
+                  <?php printSeats() ?>
+                </datalist>
+              </div>
+              <input type="submit" name="book" value="Book" class="submit" />
+            </form>
+          </div>
+        </div>
+      <?php endif; ?>
 
     </div>
 
