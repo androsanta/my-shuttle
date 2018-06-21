@@ -127,6 +127,7 @@
 
         $_SESSION['isLogged'] = true;
         $_SESSION['email'] = $_POST['email'];
+        $_SESSION['routing'] = 'personalPage';
       } catch (Exception $e) {
         mysqli_rollback($mydb);
 
@@ -358,8 +359,8 @@
         $query = '
           SELECT departure, destination, seats
           FROM users
-          WHERE (departure <= "' . $departure . '" AND destination >= "' . $departure . '")
-            OR (departure <= "' . $destination . '" AND destination >= "' . $destination . '")
+          WHERE (departure <= "' . $departure . '" AND destination > "' . $departure . '")
+            OR (departure < "' . $destination . '" AND destination >= "' . $destination . '")
             OR (departure >= "' . $departure . '" AND destination <= "' . $destination . '")
             OR (departure <= "' . $departure . '" AND destination >= "' . $destination . '")
           FOR UPDATE;
@@ -374,18 +375,14 @@
         $i = 0;
         $entry = array();
 
-
         while ($i < $n) {
           $el = mysqli_fetch_array($res, MYSQLI_NUM);
-          print_r($el);
           $entry[$i] = array();
           $entry[$i][0] = $el[0];
           $entry[$i][1] = $el[1];
           $entry[$i][2] = $el[2];
           $i++;
         }
-
-        print_r($entry);
 
         $stops = getStops($mydb);
         $nStop = sizeof($stops);
@@ -400,10 +397,11 @@
           echo "currDeparture " . $currDeparture . " - currDestination " . $currDestination . "\n";
 
           $j = 0;
-          while ($j < $n) {
+          while ($j < $n) { // enter loop only for stops that are contained into 
             echo "comparing " . $entry[$j][0] . " ". $entry[$j][1] . " ". $entry[$j][2] . "\n";
-            if (strcmp($entry[$j][0], $currDeparture) >= 0
-              && strcmp($entry[$j][1], $currDestination) <= 0) {
+
+            if (strcmp($entry[$j][0], $currDeparture) <= 0
+              && strcmp($entry[$j][1], $currDestination) >= 0) {
               $seatsSum = $seatsSum + $entry[$j][2];
             }
             $j++;
@@ -411,7 +409,7 @@
 
           echo "end seatsum ". $seatsSum . "\n";
 
-          if ($seatsSum > BUS_SEATS) {
+          if ($seatsSum + $seats > BUS_SEATS) {
             throw new Exception("Bus has not enough seats for this booking!", 1);
           }
 
@@ -429,10 +427,7 @@
         if (!res)
           throw new Exception("Unable to complete booking procedure!", 1);
           
-
         mysqli_free_result($res);
-
-        exit;
 
         mysqli_commit($mydb);
 
@@ -445,7 +440,6 @@
         $_SESSION['errorMessage'] = $e->getMessage();
       }
 
-      mysqli_autocommit($mydb, true);
       mysqli_close($mydb);
 
     } else echo "not possible to connect to database";
