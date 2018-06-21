@@ -135,6 +135,7 @@
         $_SESSION['errorMessage'] = "Unable to complete signup procedure";
       }
 
+      mysqli_autocommit($mydb, true);
       mysqli_close($mydb);
 
       header('Location: https://' . $_SERVER['HTTP_HOST'] . "/my-shuttle");
@@ -227,6 +228,31 @@
     return $details;
   }
 
+  function getUserStops ($db) {
+    $arr = array();
+    $arr[0] = '';
+    $arr[1] = '';
+
+    if (!isset($_SESSION['email']))
+      return $arr;
+
+    $query = '
+      SELECT departure, destination
+      FROM users
+      WHERE email = "'. $_SESSION['email'] .'";
+    ';
+    $res = mysqli_query($db, $query);
+    if ($res && mysqli_num_rows($res) > 0) {
+      $el = mysqli_fetch_array($res);
+      $arr[0] = $el[0];
+      $arr[1] = $el[1];
+
+      mysqli_free_result($res);
+    }
+
+    return $arr;
+  }
+
   // Print overview of booking
   function bookOverview ($detailsEnabled) {
     $mydb = mysqli_connect('localhost', 'root', '', 'my_shuttle');
@@ -238,6 +264,8 @@
 
       $currDeparture = $stops[$i];
 
+      $userStops = getUserStops($mydb);
+
       while ($i++ < $n - 1) {
         $currDestination = $stops[$i];
 
@@ -247,15 +275,26 @@
         else
           $bookInfo = getNumberOfBooking($mydb, $currDeparture, $currDestination);
 
+        $depClass = 'tableElement';
+        $destClass = 'tableElement';
+
+        if ($detailsEnabled) {
+          if ($userStops[0] == $currDeparture)
+            $depClass = 'tableElementDep';
+
+          if ($userStops[1] == $currDestination)
+            $destClass = 'tableElementDest';
+        }
+
         echo 
           '<tr>
             <td>
-              <div class="tableElement">
+              <div class="'. $depClass .'">
                 ' . $currDeparture . '
               </div>
             </td>
             <td>
-              <div class="tableElement">
+              <div class="'. $destClass .'">
                 ' . $currDestination . '
               </div>
             </td>
@@ -278,9 +317,9 @@
   // Book and eventually insert new addresses
   function book () {
 
-    $departure = $_SESSION['departure'];
-    $destination = $_SESSION['destination'];
-    $seats = $_SESSION['seats'];
+    $departure = $_POST['departure'];
+    $destination = $_POST['destination'];
+    $seats = $_POST['seats'];
 
     if ($departure >= $destination || $seats < 1 || $seats > BUS_SEATS) {
       $_SESSION['userError'] = true;
@@ -293,8 +332,26 @@
     $mydb = mysqli_connect('localhost', 'root', '', 'my_shuttle');
 
     if ($mydb) {
+
       try {
         mysqli_autocommit($mydb, false);
+
+
+        $query = '
+          SELECT *
+          FROM users
+          WHERE email = "'. $_SESSION['email'] .'" and (departure IS NOT NULL OR destination IS NOT NULL);
+        ';
+
+        $res = mysqli_query($mydb, $query);
+
+        if (!$res)
+          throw new Exception("Unable to complete booking procedure", 1);
+
+        if (mysqli_num_rows($res) > 0)
+          throw new Exception("You already have a booking scheduled", 1);
+          
+          
 
         // select and lock for update only the rows of users
         // that has a trip that intersect the new trip
@@ -310,15 +367,17 @@
         $res = mysqli_query($mydb, $query);
 
         if (!$res)
-          throw new Exception("Unable to execute query " . $query, 1);
+          throw new Exception("Unable to complete booking procedure", 1);
 
         // verify if the new trip exceed the capacity of the bus
         $n = mysqli_num_rows($res);
         $i = 0;
         $entry = array();
 
+
         while ($i < $n) {
-          $el = mysqli_fetch_array($res);
+          $el = mysqli_fetch_array($res, MYSQLI_NUM);
+          print_r($el);
           $entry[$i] = array();
           $entry[$i][0] = $el[0];
           $entry[$i][1] = $el[1];
@@ -326,6 +385,7 @@
           $i++;
         }
 
+        print_r($entry);
 
         $stops = getStops($mydb);
         $nStop = sizeof($stops);
@@ -337,39 +397,85 @@
           $seatsSum = 0;
 
 
+          echo "currDeparture " . $currDeparture . " - currDestination " . $currDestination . "\n";
+
           $j = 0;
           while ($j < $n) {
+            echo "comparing " . $entry[$j][0] . " ". $entry[$j][1] . " ". $entry[$j][2] . "\n";
             if (strcmp($entry[$j][0], $currDeparture) >= 0
               && strcmp($entry[$j][1], $currDestination) <= 0) {
               $seatsSum = $seatsSum + $entry[$j][2];
             }
+            $j++;
           }
 
+          echo "end seatsum ". $seatsSum . "\n";
+
           if ($seatsSum > BUS_SEATS) {
-            // return error to user
+            throw new Exception("Bus has not enough seats for this booking!", 1);
           }
 
           $currDeparture = $currDestination;
         }
 
+        $query = '
+          UPDATE users
+          SET departure = "' . $departure . '", destination = "' . $destination . '", seats = "' . $seats . '"
+          WHERE email = "' . $_SESSION['email'] . '";
+        ';
+
+        $res = mysqli_query($mydb, $query);
+
+        if (!res)
+          throw new Exception("Unable to complete booking procedure!", 1);
+          
 
         mysqli_free_result($res);
 
+        exit;
+
         mysqli_commit($mydb);
+
+        $_SESSION['userError'] = true;
+        $_SESSION['errorMessage'] = "Booking procedure completed successful!"; // actually this is not an error
       } catch (Exception $e) {
         mysqli_rollback($mydb);
 
         $_SESSION['userError'] = true;
-        $_SESSION['errorMessage'] = "Unable to complete booking procedure";
+        $_SESSION['errorMessage'] = $e->getMessage();
       }
 
+      mysqli_autocommit($mydb, true);
       mysqli_close($mydb);
-
-      header('Location: https://' . $_SERVER['HTTP_HOST'] . "/my-shuttle");
-      exit;
 
     } else echo "not possible to connect to database";
 
+
+    header('Location: https://' . $_SERVER['HTTP_HOST'] . "/my-shuttle");
+    exit;
+  }
+
+  function deleteBooking () {
+    $mydb = mysqli_connect('localhost', 'root', '', 'my_shuttle');
+
+    if ($mydb) {
+      $query = '
+        UPDATE users
+        SET departure = NULL, destination = NULL
+        WHERE email = "'. $_SESSION['email'] .'";
+      ';
+
+      $res = mysqli_query($mydb, $query);
+
+      if (!res) {
+        $_SESSION['userError'] = true;
+        $_SESSION['errorMessage'] = "Unable to perform the delete operation";
+      } else {
+        mysqli_free_result($res);
+      }
+
+      mysqli_close($mydb);
+    } else echo "not possible to connect to database";
 
     header('Location: https://' . $_SERVER['HTTP_HOST'] . "/my-shuttle");
     exit;

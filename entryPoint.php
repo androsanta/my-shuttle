@@ -57,7 +57,6 @@
   if (!empty($_GET)) {
     // check which action should be performed
     foreach ($_GET as $key => $value) {
-      echo $key . " " . $value . "\n";
       if ($key != "" && $key == "action" && $value != "")
         $action = $value;
     }
@@ -78,6 +77,10 @@
     case 'book':
       if ($isLogged)
         book();
+      break;
+    case 'deleteBooking':
+      if ($isLogged)
+        deleteBooking();
       break;
     case 'home':
     case 'personalPage':

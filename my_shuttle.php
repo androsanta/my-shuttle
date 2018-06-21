@@ -25,10 +25,16 @@
     <?php if (!$isLogged): ?>
       <form action="my_shuttle.php?action=login" method="POST" class="login">
         <div class="email">
-          <input id="emailLogin" type="text" name="email" placeholder="Email" class="email">
+          <div class="tooltip">
+            <span class="tooltipText">Email must be a valid email</span>
+            <input id="emailLogin" type="text" name="email" placeholder="Email" class="email">
+          </div>
         </div>
         <div class="password">
-          <input id="pswLogin" type="password" name="password" class="password" placeholder="Password">
+          <div class="tooltip">
+            <span class="tooltipText">At least a lowercase, and at least another char (uppercase or digit)</span>
+            <input id="pswLogin" type="password" name="password" class="password" placeholder="Password">
+          </div>
         </div>
         <input type="submit" name="login" value="Login" class="submit" />
       </form>
@@ -71,10 +77,16 @@
           <h2 style="color: white">Don't have an account? Signup!</h2>
           <form action="my_shuttle.php?action=signup" method="POST" class="signup">
             <div class="email">
-              <input id="emailSignup" type="text" name="email" placeholder="Email" class="email">
+              <div class="tooltip">
+                <span class="tooltipText">Email must be a valid email</span>
+                <input id="emailSignup" type="text" name="email" placeholder="Email" class="email">
+              </div>
             </div>
             <div class="password">
-              <input id="pswSignup" type="password" name="password" class="password" placeholder="Password">
+              <div class="tooltip">
+                <span class="tooltipText">At least a lowercase, and at least another char (uppercase or digit)</span>
+                <input id="pswSignup" type="password" name="password" class="password" placeholder="Password">
+              </div>
             </div>
             <input type="submit" name="signup" value="Signup" class="submit" />
           </form>
@@ -123,6 +135,11 @@
                 </datalist>
               </div>
               <input type="submit" name="book" value="Book" class="submit" />
+            </form>
+            <form action="my_shuttle.php?action=deleteBooking" method="POST" class="book">
+              <div class="delete">
+                <input type="submit" name="deleteBooking" class="deleteBooking" value="Delete booking">
+              </div>
             </form>
           </div>
         </div>
