@@ -8,7 +8,7 @@
   -->
   <script type="text/javascript" src="jquery-1.7.2.js"></script>
   <script type="text/javascript" src="common.js"></script>
-  <?php if ($userError)
+  <?php if ($error)
     echo '<script type="text/javascript">alert("' . $errorMessage . '")</script>';
   ?>
   <link href="styles.css" rel="stylesheet" />
@@ -23,7 +23,7 @@
 
     <!-- Header, show login form or welcome message if user is logged in -->
     <?php if (!$isLogged): ?>
-      <form action="my_shuttle.php?action=login" method="POST" class="login">
+      <form action="login.php" method="POST" class="login">
         <div class="email">
           <div class="tooltip">
             <span class="tooltipText">Email must be a valid email</span>

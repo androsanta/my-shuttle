@@ -1,19 +1,4 @@
 <?php
-  // Validation functions
-  function validateEmail ($str) {
-    $re = "/[a-zA-Z0-9]+\@[a-zA-Z0-9]+\.[a-zA-Z0-9]+/";
-    return preg_match($re, $str);
-  }
-
-  function validatePassword ($str) {
-    $lower = "/[a-z]+/";
-    $upper = "/[A-Z]+/";
-    $digit = "/[0-9]+/";
-    echo preg_match($upper, $str);
-    return preg_match($lower, $str) && (preg_match($upper, $str) || preg_match($digit, $str));
-  }
-
-
   // Login
   function login () {
     // global $isLogged; // actually not used 
@@ -25,7 +10,7 @@
     // check for email and password format
     if (!validateEmail($email)) {
       $_SESSION['isLogged'] = false;
-      $_SESSION['userError'] = true;
+      $_SESSION['error'] = true;
       $_SESSION['errorMessage'] = "Email format is not correct!";
 
       header('Location: https://' . $_SERVER['HTTP_HOST'] . "/my-shuttle");
@@ -34,7 +19,7 @@
 
     if (!validatePassword($password)) {
       $_SESSION['isLogged'] = false;
-      $_SESSION['userError'] = true;
+      $_SESSION['error'] = true;
       $_SESSION['errorMessage'] = "Password format is not correct!";
 
       header('Location: https://' . $_SERVER['HTTP_HOST'] . "/my-shuttle");
@@ -66,7 +51,7 @@
       }
 
       $_SESSION['isLogged'] = $isLogged;
-      $_SESSION['userError'] = $error;
+      $_SESSION['error'] = $error;
       $_SESSION['errorMessage'] = "Wrong Credentials";
 
       header('Location: https://' . $_SERVER['HTTP_HOST'] . "/my-shuttle");
@@ -95,7 +80,7 @@
     // check for email and password format
     if (!validateEmail($email)) {
       $_SESSION['isLogged'] = false;
-      $_SESSION['userError'] = true;
+      $_SESSION['error'] = true;
       $_SESSION['errorMessage'] = "Email format is not correct!";
 
       header('Location: https://' . $_SERVER['HTTP_HOST'] . "/my-shuttle");
@@ -104,7 +89,7 @@
 
     if (!validatePassword($password)) {
       $_SESSION['isLogged'] = false;
-      $_SESSION['userError'] = true;
+      $_SESSION['error'] = true;
       $_SESSION['errorMessage'] = "Password format is not correct!";
 
       header('Location: https://' . $_SERVER['HTTP_HOST'] . "/my-shuttle");
@@ -132,7 +117,7 @@
         mysqli_rollback($mydb);
 
         $_SESSION['isLogged'] = false;
-        $_SESSION['userError'] = true;
+        $_SESSION['error'] = true;
         $_SESSION['errorMessage'] = "Unable to complete signup procedure";
       }
 
@@ -323,7 +308,7 @@
     $seats = $_POST['seats'];
 
     if ($departure >= $destination || $seats < 1 || $seats > BUS_SEATS) {
-      $_SESSION['userError'] = true;
+      $_SESSION['error'] = true;
       $_SESSION['errorMessage'] = "You must insert valid data for stops and seats!";
       header('Location: https://' . $_SERVER['HTTP_HOST'] . "/my-shuttle");
       exit;
@@ -431,15 +416,16 @@
 
         mysqli_commit($mydb);
 
-        $_SESSION['userError'] = true;
+        $_SESSION['error'] = true;
         $_SESSION['errorMessage'] = "Booking procedure completed successful!"; // actually this is not an error
       } catch (Exception $e) {
         mysqli_rollback($mydb);
 
-        $_SESSION['userError'] = true;
+        $_SESSION['error'] = true;
         $_SESSION['errorMessage'] = $e->getMessage();
       }
 
+      mysqli_autocommit($mydb, true);
       mysqli_close($mydb);
 
     } else echo "not possible to connect to database";
@@ -462,7 +448,7 @@
       $res = mysqli_query($mydb, $query);
 
       if (!res) {
-        $_SESSION['userError'] = true;
+        $_SESSION['error'] = true;
         $_SESSION['errorMessage'] = "Unable to perform the delete operation";
       } else {
         mysqli_free_result($res);

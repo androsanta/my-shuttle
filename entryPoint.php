@@ -1,22 +1,9 @@
 <?php
-  session_start();
-
-  if (isset($_SESSION['expire_time']) && time() > $_SESSION['expire_time']) {
-    session_unset();
-    session_destroy();
-    session_start();
-  }
-
-  $_SESSION['expire_time'] = time() + 120;
-
-  // check for https
-  if($_SERVER['SERVER_PORT'] !== 443 && (empty($_SERVER['HTTPS']) || $_SERVER['HTTPS'] === 'off')) {
-    header('Location: https://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']);
-    exit;
-  }
-
   define("BUS_SEATS", 20);
   include("functions.php");
+  include('common.php');
+
+  my_session_start();
 
   /*
   * used to perform action and decide what to render on screen
@@ -30,7 +17,7 @@
   $action = "";
   $isLogged = false;
 
-  $userError = false;
+  $error = false;
   $errorMessage = '';
 
   $routing = 'home';
@@ -42,9 +29,9 @@
         case 'isLogged':
           $isLogged = $value;
           break;
-        case 'userError':
-          $userError = $value;
-          $_SESSION['userError'] = false;
+        case 'error':
+          $error = $value;
+          $_SESSION['error'] = false;
           $errorMessage = $_SESSION['errorMessage'];
           break;
         case 'routing':
@@ -63,10 +50,10 @@
   }
 
   switch ($action) {
-    case 'login':
+    /*case 'login':
       if (!$isLogged)
         login();
-      break;
+      break;*/
     case 'signup':
       if (!$isLogged)
         signup();
