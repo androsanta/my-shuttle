@@ -75,7 +75,7 @@
       <div class="contentContainer">
         <div class="signupContent">
           <h2 style="color: white">Don't have an account? Signup!</h2>
-          <form action="my_shuttle.php?action=signup" method="POST" class="signup">
+          <form action="signup.php" method="POST" class="signup">
             <div class="email">
               <div class="tooltip">
                 <span class="tooltipText">Email must be a valid email</span>
@@ -136,7 +136,7 @@
               </div>
               <input type="submit" name="book" value="Book" class="submit" />
             </form>
-            <form action="my_shuttle.php?action=deleteBooking" method="POST" class="book">
+            <form action="deleteBooking.php" method="POST" class="book">
               <div class="delete">
                 <input type="submit" name="deleteBooking" class="deleteBooking" value="Delete booking">
               </div>

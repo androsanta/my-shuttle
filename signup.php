@@ -5,6 +5,7 @@
   function signup () {
     $email = $_POST['email'];
     $password = $_POST['password'];
+    $msg = '';
 
     if (!validate($email, $password, $msg)) {
       $_SESSION['isLogged'] = false;
@@ -29,7 +30,7 @@
       $stmt->bind_param('ss', $email, $password);
       $res = $stmt->execute();
 
-      if ($res && $stmt->affected_rows() == 1) {
+      if ($res) {
         $_SESSION['isLogged'] = true;
         $_SESSION['email'] = $_POST['email'];
         $_SESSION['routing'] = 'personalPage';

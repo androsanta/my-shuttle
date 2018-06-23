@@ -304,32 +304,6 @@
     exit;
   }
 
-  function deleteBooking () {
-    $mydb = mysqli_connect('localhost', 'root', '', 'my_shuttle');
-
-    if ($mydb) {
-      $query = '
-        UPDATE users
-        SET departure = NULL, destination = NULL
-        WHERE email = "'. $_SESSION['email'] .'";
-      ';
-
-      $res = mysqli_query($mydb, $query);
-
-      if (!res) {
-        $_SESSION['error'] = true;
-        $_SESSION['errorMessage'] = "Unable to perform the delete operation";
-      } else {
-        mysqli_free_result($res);
-      }
-
-      mysqli_close($mydb);
-    } else echo "not possible to connect to database";
-
-    header('Location: https://' . $_SERVER['HTTP_HOST'] . "/my-shuttle");
-    exit;
-  }
-
   function printStops () {
     $mydb = mysqli_connect('localhost', 'root', '', 'my_shuttle');
 
