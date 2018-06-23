@@ -42,7 +42,7 @@
       <div class="welcome">
         <h3 class="welcome">Welcome</h3>
         <?php echo '<h3 class="welcomeColored">'.$_SESSION['email'].'</h3>'; ?>
-        <form action="my_shuttle.php?action=logout" method="POST">
+        <form action="logout.php" method="POST">
           <input type="submit" name="logout" value="Logout" class="logout" />
         </form>
       </div>

@@ -50,16 +50,9 @@
   }
 
   switch ($action) {
-    /*case 'login':
-      if (!$isLogged)
-        login();
-      break;*/
     case 'signup':
       if (!$isLogged)
         signup();
-      break;
-    case 'logout':
-      logout();
       break;
     case 'book':
       if ($isLogged)

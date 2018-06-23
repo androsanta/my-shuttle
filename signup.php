@@ -1,8 +1,8 @@
 <?php
   include('common.php');
 
-  // Login
-  function login () {
+  // Signup
+  function signup () {
     $email = $_POST['email'];
     $password = $_POST['password'];
 
@@ -20,29 +20,25 @@
     $mydb = new mysqli('localhost', 'root', '', 'my_shuttle');
 
     if (!mysqli_connect_errno()) {
-      // check for credentials (using sql function md5)
       $query = '
-        SELECT email
-        FROM users
-        WHERE email = ? AND password = MD5(?);
+        INSERT INTO users (email, password)
+        VALUES (?, MD5(?));
       ';
 
       $stmt = $mydb->prepare($query);
       $stmt->bind_param('ss', $email, $password);
       $res = $stmt->execute();
-      $stmt->store_result();
 
-      if ($res && $stmt->num_rows == 1) {
+      if ($res && $stmt->affected_rows() == 1) {
         $_SESSION['isLogged'] = true;
-        $_SESSION['email'] = $email;
+        $_SESSION['email'] = $_POST['email'];
         $_SESSION['routing'] = 'personalPage';
       } else {
         $_SESSION['isLogged'] = false;
         $_SESSION['error'] = true;
-        $_SESSION['errorMessage'] = "Wrong Credentials";
+        $_SESSION['errorMessage'] = "Unable to complete signup procedure";
       }
 
-      $stmt->free_result();
       $stmt->close();
       $mydb->close();
     } else {
@@ -56,5 +52,5 @@
 
 
   my_session_start();
-  login();
+  signup();
 ?>

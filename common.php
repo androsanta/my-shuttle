@@ -12,6 +12,22 @@
     return preg_match($lower, $str) && (preg_match($upper, $str) || preg_match($digit, $str));
   }
 
+  function validate ($email, $password, $errorMessage) {
+    // prevent php code injection and check for email and password format
+
+    if ($email != strip_tags($email) || !validateEmail($email)) {
+      $errorMessage = "Email format is not correct!";
+      return false;
+    }
+
+    if ($password != strip_tags($password) || !validatePassword($password)) {
+      $errorMessage = "Password format is not correct!";
+      return false;
+    }
+
+    return true;
+  }
+
   // start timed session and eventually redirect to https
   function my_session_start () {
     session_start();
