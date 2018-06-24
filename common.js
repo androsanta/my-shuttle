@@ -15,6 +15,12 @@ $(document).ready(function () {
   if (window.location.protocol !== 'https:')
     window.location.href = 'https:' + window.location.href.substring(window.location.protocol.length)
 
+  // check that cookies are enabled
+  if (!navigator.cookieEnabled)  {
+    console.log(window.location.host + '/cookieDisabled.php')
+    window.location.href = 'https://' + window.location.host + '/my-shuttle/cookieDisabled.php'
+  }
+
   // handle login
   $("form.login").submit(function (event) {
     var email = document.getElementById('emailLogin').value
