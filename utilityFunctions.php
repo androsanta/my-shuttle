@@ -162,12 +162,9 @@
       while ($i++ < $n - 1) {
         $currDestination = $stops[$i];
 
-        $bookInfo = '';
-        if ($detailsEnabled) {
-          $bookInfo = getNumberOfBooking($mydb, $currDeparture, $currDestination) . getBookingDetails($mydb, $currDeparture, $currDestination);
-        } else {
-          $bookInfo = getNumberOfBooking($mydb, $currDeparture, $currDestination);
-        }
+        $bookInfo = getNumberOfBooking($mydb, $currDeparture, $currDestination) . "/" . BUS_SEATS;
+        if ($detailsEnabled)
+           $bookInfo = $bookInfo . getBookingDetails($mydb, $currDeparture, $currDestination);
 
         $depClass = 'tableElement';
         $destClass = 'tableElement';
