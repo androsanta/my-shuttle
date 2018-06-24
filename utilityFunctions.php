@@ -11,7 +11,7 @@
     $res = $db->query($query);
 
     if ($res) {
-      $i = $res->num_rows();
+      $i = $res->num_rows;
       while ($i--) {
         $el = $res->fetch_array(MYSQLI_NUM);
         array_push($dep, $el[0]);
@@ -26,7 +26,7 @@
     $res = $db->query($query);
 
     if ($res) {
-      $i = $res->num_rows();
+      $i = $res->num_rows;
       while ($i--) {
         $el = $res->fetch_array(MYSQLI_NUM);
         array_push($dest, $el[0]);
@@ -106,7 +106,7 @@
     $res = $db->query($query);
 
     if ($res) {
-      $i = $res->num_rows();
+      $i = $res->num_rows;
       if ($i != 0)
         $details = ' -'; // just to format output
 
@@ -136,7 +136,7 @@
       WHERE email = "'. $_SESSION['email'] .'";
     ';
     $res = $db->query($query);
-    if ($res && $res->num_rows() > 0) {
+    if ($res && $res->num_rows > 0) {
       $el = $res->fetch_array(MYSQLI_NUM);
       $arr[0] = $el[0];
       $arr[1] = $el[1];
@@ -203,7 +203,7 @@
         $currDeparture = $currDestination;
       }
 
-      $mydb->free();
+      $mydb->close();
     } else echo "not possible to connect to database";
   }
 ?>
