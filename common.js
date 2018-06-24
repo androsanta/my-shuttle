@@ -33,7 +33,7 @@ $(document).ready(function () {
     }
   })
 
-  // handle
+  // handle signup
   $("form.signup").submit(function (event) {
     var email = document.getElementById('emailSignup').value
     var password = document.getElementById('pswSignup').value

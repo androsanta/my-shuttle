@@ -1,5 +1,9 @@
 <?php
-  // Validation functions
+  // BUS SEATS AVAILABILITY
+  define('BUS_SEATS', 20);
+
+
+  /*** Validation functions ***/
   function validateEmail ($str) {
     $re = "/[a-zA-Z0-9]+\@[a-zA-Z0-9]+\.[a-zA-Z0-9]+/";
     return preg_match($re, $str);
@@ -27,6 +31,31 @@
 
     return true;
   }
+
+  function validateBook ($dep, $dest, $seats, $msg) {
+    if ($dep != strip_tags($dep)) {
+      $msg = 'Departure value has wrong format';
+      return false;
+    }
+
+    if ($dest != strip_tags($dest)) {
+      $msg = 'Destination value has wrong format';
+      return false;
+    }
+
+    if (strcmp($dep, $dest) >= 0) {
+      $msg = 'Departure must precede destination!';
+      return false;
+    }
+
+    if ($seats != strip_tags($seats) || $seats < 1 || $seats > BUS_SEATS) {
+      $msg = 'Seats must be a value between 1 and ' . BUS_SEATS;
+      return false;
+    }
+
+    return true;
+  }
+  
 
   // start timed session and eventually redirect to https
   function my_session_start () {

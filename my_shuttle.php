@@ -54,11 +54,11 @@
 
     <!-- Sidebar -->
     <div class="sidebar">
-      <form action="my_shuttle.php?action=home" method="POST" class="menuEntry">
+      <form action="routing.php" method="POST" class="menuEntry">
         <input type="submit" name="routing" value="Home" class="menuEntry" />
       </form>
       <?php if ($isLogged): ?>
-        <form action="my_shuttle.php?action=personalPage" method="POST" class="menuEntry">
+        <form action="routing.php" method="POST" class="menuEntry">
           <input type="submit" name="routing" value="Personal" class="menuEntry" />
         </form>
       <?php endif; ?>
@@ -115,7 +115,7 @@
         <div class="contentContainer">
           <div class="bookContent">
             <h3 style="color: #00abff">Book for a trip!</h2>
-            <form action="my_shuttle.php?action=book" method="POST" class="book">
+            <form action="book.php" method="POST" class="book">
               <div class="bookInput">
                 <input list="departure" type="text" name="departure" placeholder="Departure" class="book">
                 <datalist id="departure">
@@ -151,8 +151,7 @@
 
   </div>
   <noscript>
-    Sorry: Your browser does not support or has
-    disabled javascript
+    Sorry: Your browser does not support or has disabled javascript
   </noscript>
 </body>
 </html>

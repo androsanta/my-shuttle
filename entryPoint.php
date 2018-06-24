@@ -1,7 +1,6 @@
 <?php
-  define("BUS_SEATS", 20);
-  include("functions.php");
   include('common.php');
+  include('utilityFunctions.php');
 
   my_session_start();
 
@@ -39,26 +38,6 @@
           break;
       }
     }
-  }
-
-  if (!empty($_GET)) {
-    // check which action should be performed
-    foreach ($_GET as $key => $value) {
-      if ($key != "" && $key == "action" && $value != "")
-        $action = $value;
-    }
-  }
-
-  switch ($action) {
-    case 'book':
-      if ($isLogged)
-        book();
-      break;
-    case 'home':
-    case 'personalPage':
-      $_SESSION['routing'] = $action;
-      header('Location: https://' . $_SERVER['HTTP_HOST'] . "/my-shuttle");
-      exit;
   }
 
 ?>
