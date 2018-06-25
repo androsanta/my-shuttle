@@ -8,7 +8,7 @@
     session_unset();
     session_destroy();
     
-    header('Location: https://' . $_SERVER['HTTP_HOST'] . "/my-shuttle");
+    header('Location: index.php');
     exit;
   }
 

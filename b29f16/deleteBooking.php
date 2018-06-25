@@ -4,7 +4,7 @@
   // Delete booking
   function deleteBooking () {
     // connect to database
-    $mydb = new mysqli('localhost', 'root', '', 'my_shuttle');
+    $mydb = new mysqli(MYSQLI_HOST, MYSQLI_USERNAME, MYSQLI_PASSWORD, MYSQLI_DBNAME);
 
     if (!mysqli_connect_errno()) {
       $query = '
@@ -29,7 +29,7 @@
       $_SESSION['errorMessage'] = "Error while accessing to database";
     }
 
-    header('Location: https://' . $_SERVER['HTTP_HOST'] . "/my-shuttle");
+    header('Location: index.php');
     exit;
   }
 
@@ -41,7 +41,7 @@
     $_SESSION['error'] = true;
     $_SESSION['errorMessage'] = "To delete a booking you must be logged in!";
 
-    header('Location: https://' . $_SERVER['HTTP_HOST'] . "/my-shuttle");
+    header('Location: index.php');
     exit;
   }
 ?>

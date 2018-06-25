@@ -11,13 +11,13 @@
       $_SESSION['error'] = true;
       $_SESSION['errorMessage'] = $msg;
 
-      header('Location: https://' . $_SERVER['HTTP_HOST'] . "/my-shuttle");
+      header('Location: index.php');
       exit;
     }
 
 
     // connect to database
-    $mydb = new mysqli('localhost', 'root', '', 'my_shuttle');
+    $mydb = new mysqli(MYSQLI_HOST, MYSQLI_USERNAME, MYSQLI_PASSWORD, MYSQLI_DBNAME);
 
     if (!mysqli_connect_errno()) {
       // check for credentials (using sql function md5)
@@ -50,7 +50,7 @@
       $_SESSION['errorMessage'] = "Error while accessing to database";
     }
 
-    header('Location: https://' . $_SERVER['HTTP_HOST'] . "/my-shuttle");
+    header('Location: index.php');
     exit;
   }
 

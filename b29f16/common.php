@@ -1,6 +1,10 @@
 <?php
   // BUS SEATS AVAILABILITY
   define('BUS_SEATS', 20);
+  define('MYSQLI_USERNAME', 's251579');
+  define('MYSQLI_PASSWORD', 'stakedle');
+  define('MYSQLI_DBNAME', 's251579');
+  define('MYSQLI_HOST', 'localhost');
 
 
   /*** Validation functions ***/
@@ -16,7 +20,7 @@
     return preg_match($lower, $str) && (preg_match($upper, $str) || preg_match($digit, $str));
   }
 
-  function validate ($email, $password, $errorMessage) {
+  function validate ($email, $password, &$errorMessage) {
     // prevent php code injection and check for email and password format
 
     if ($email != strip_tags($email) || !validateEmail($email)) {
@@ -32,7 +36,7 @@
     return true;
   }
 
-  function validateBook ($dep, $dest, $seats, $msg) {
+  function validateBook ($dep, $dest, $seats, &$msg) {
     if ($dep != strip_tags($dep)) {
       $msg = 'Departure value has wrong format';
       return false;
@@ -49,7 +53,7 @@
     }
 
     if ($seats != strip_tags($seats) || $seats < 1 || $seats > BUS_SEATS) {
-      $msg = 'Seats must be a value between 1 and ' . BUS_SEATS;
+      $msg = 'Seats must be a value between 1 and ' . BUS_SEATS . "!";
       return false;
     }
 

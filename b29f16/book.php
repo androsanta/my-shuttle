@@ -15,12 +15,12 @@
       $_SESSION['error'] = true;
       $_SESSION['errorMessage'] = $msg;
 
-      header('Location: https://' . $_SERVER['HTTP_HOST'] . "/my-shuttle");
+      header('Location: index.php');
       exit;
     }
 
 
-    $mydb = new mysqli('localhost', 'root', '', 'my_shuttle');
+    $mydb = new mysqli(MYSQLI_HOST, MYSQLI_USERNAME, MYSQLI_PASSWORD, MYSQLI_DBNAME);
 
     if (!mysqli_connect_errno()) {
 
@@ -107,8 +107,6 @@
 
         $stmt->close();
 
-        print_r($entry);
-
 
         // Verify if the new trip exceed the capacity of the bus
         $stops = getStops($mydb);
@@ -145,7 +143,7 @@
         ';
 
         $stmt = $mydb->prepare($query);
-        $stmt->bind_param('ssss', $departure, $destination, $seats, $email);
+        $stmt->bind_param('ssis', $departure, $destination, $seats, $email);
         $res = $stmt->execute();
 
         if (!$res)
@@ -171,7 +169,7 @@
     }
 
 
-    header('Location: https://' . $_SERVER['HTTP_HOST'] . "/my-shuttle");
+    header('Location: index.php');
     exit;
   }
 
@@ -183,7 +181,7 @@
     $_SESSION['error'] = true;
     $_SESSION['errorMessage'] = "To book a trip you must be logged in!";
 
-    header('Location: https://' . $_SERVER['HTTP_HOST'] . "/my-shuttle");
+    header('Location: index.php');
     exit;
   }
 ?>

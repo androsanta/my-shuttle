@@ -18,7 +18,7 @@ $(document).ready(function () {
   // check that cookies are enabled
   if (!navigator.cookieEnabled)  {
     console.log(window.location.host + '/cookieDisabled.php')
-    window.location.href = 'https://' + window.location.host + '/my-shuttle/cookieDisabled.php'
+    window.location.href = 'https://' + window.location.host + '/my-shuttle/cookieJsDisabled.php'
   }
 
   // handle login

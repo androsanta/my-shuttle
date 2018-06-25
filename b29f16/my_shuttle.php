@@ -12,6 +12,9 @@
     echo '<script type="text/javascript">alert("' . $errorMessage . '")</script>';
   ?>
   <link href="styles.css" rel="stylesheet" />
+  <noscript>
+    <meta http-equiv="Refresh" content="0; URL=cookieJsDisabled.php" />
+  </noscript>
 </head>
 <body>
   <div class="container">
@@ -150,8 +153,5 @@
   </div>
 
   </div>
-  <noscript>
-    Sorry: Your browser does not support or has disabled javascript
-  </noscript>
 </body>
 </html>

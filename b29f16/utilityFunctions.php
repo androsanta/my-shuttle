@@ -43,7 +43,7 @@
 
   // Print all stops using the option tag, that will be used by datalist
   function printStops () {
-    $mydb = new mysqli('localhost', 'root', '', 'my_shuttle');
+    $mydb = new mysqli(MYSQLI_HOST, MYSQLI_USERNAME, MYSQLI_PASSWORD, MYSQLI_DBNAME);
 
     if (!mysqli_connect_errno()) {
       $arr = getStops($mydb);
@@ -149,11 +149,17 @@
 
   // Print overview of booking, with or without user details
   function bookOverview ($detailsEnabled) {
-    $mydb = new mysqli('localhost', 'root', '', 'my_shuttle');
+    $mydb = new mysqli(MYSQLI_HOST, MYSQLI_USERNAME, MYSQLI_PASSWORD, MYSQLI_DBNAME);
 
     if (!mysqli_connect_errno()) {
       $stops = getStops($mydb);
+
       $n = sizeof($stops);
+      if ($n == 0) {
+        $mydb->close();
+        return;
+      }
+
       $i = 0;
 
       $currDeparture = $stops[$i];
