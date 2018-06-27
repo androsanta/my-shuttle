@@ -1,9 +1,12 @@
 <?php
   // BUS SEATS AVAILABILITY
   define('BUS_SEATS', 20);
-  define('MYSQLI_USERNAME', 's251579');
-  define('MYSQLI_PASSWORD', 'stakedle');
-  define('MYSQLI_DBNAME', 's251579');
+  // define('MYSQLI_USERNAME', 's251579');
+  define('MYSQLI_USERNAME', 'root');
+  // define('MYSQLI_PASSWORD', 'stakedle');
+  define('MYSQLI_PASSWORD', '');
+  // define('MYSQLI_DBNAME', 's251579');
+  define('MYSQLI_DBNAME', 'my_shuttle');
   define('MYSQLI_HOST', 'localhost');
 
 

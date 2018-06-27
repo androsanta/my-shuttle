@@ -8,6 +8,9 @@
   -->
   <script type="text/javascript" src="jquery-1.7.2.js"></script>
   <script type="text/javascript" src="common.js"></script>
+  <?php if ($cookieJsAlert)
+    echo '<script type="text/javascript">alert("This site require cookies and Javascript to work properly!")</script>';
+  ?>
   <?php if ($error)
     echo '<script type="text/javascript">alert("' . $errorMessage . '")</script>';
   ?>

@@ -54,7 +54,10 @@
         echo '<option value="' . $arr[$i++] . '"></option>';
 
       $mydb->close();
-    } else echo "not possible to connect to database";
+    } else {
+      header("Location: dbUnavailable.php");
+      exit;
+    }
   }
 
   // Print all possible seats value, using the option tag, that will be used by datalist
@@ -169,18 +172,16 @@
         $currDestination = $stops[$i];
 
         $bookInfo = getNumberOfBooking($mydb, $currDeparture, $currDestination) . "/" . BUS_SEATS;
-        if ($detailsEnabled)
-           $bookInfo = $bookInfo . getBookingDetails($mydb, $currDeparture, $currDestination);
-
         $depClass = 'tableElement';
         $destClass = 'tableElement';
 
         if ($detailsEnabled) {
-          if ($userStops[0] == $currDeparture)
-            $depClass = 'tableElementDep';
-
-          if ($userStops[1] == $currDestination)
-            $destClass = 'tableElementDest';
+          $bookInfo = $bookInfo . getBookingDetails($mydb, $currDeparture, $currDestination);
+          if ($userStops[0] == $currDeparture) {
+            $depClass = 'tableElementCurrent';
+          } else if ($userStops[1] == $currDestination) {
+            $destClass = 'tableElementCurrent';
+          }
         }
 
         echo 
@@ -207,6 +208,9 @@
       }
 
       $mydb->close();
-    } else echo "not possible to connect to database";
+    } else {
+      header("Location: dbUnavailable.php");
+      exit;
+    }
   }
 ?>

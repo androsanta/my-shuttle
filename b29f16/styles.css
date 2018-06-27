@@ -178,14 +178,7 @@ div.tableElement {
   padding-bottom: 8px;
 }
 
-div.tableElementDep {
-  text-align: center;
-  padding-top: 8px;
-  padding-bottom: 8px;
-  color: #53a182;
-}
-
-div.tableElementDest {
+div.tableElementCurrent {
   text-align: center;
   padding-top: 8px;
   padding-bottom: 8px;

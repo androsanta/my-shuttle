@@ -21,6 +21,8 @@
 
   $routing = 'home';
 
+  $cookieJsAlert = true;
+
 
   if (!empty($_SESSION)) {
     foreach ($_SESSION as $key => $value) {
@@ -36,8 +38,12 @@
         case 'routing':
           $routing = $value;
           break;
+        case 'cookieJsAlert':
+          $cookieJsAlert = $value;
+          break;
       }
     }
   }
 
+  $_SESSION['cookieJsAlert'] = false;
 ?>
