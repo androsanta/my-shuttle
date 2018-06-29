@@ -1,6 +1,6 @@
 <?php
   // BUS SEATS AVAILABILITY
-  define('BUS_SEATS', 20);
+  define('BUS_SEATS', 4);
   define('MYSQLI_USERNAME', 's251579');
   define('MYSQLI_PASSWORD', 'stakedle');
   define('MYSQLI_DBNAME', 's251579');

@@ -71,7 +71,7 @@
 
   // Get only the number of booking given a departure and a destination (without user details)
   function getNumberOfBooking ($db, $dep, $dest) {
-    $nBook = "No booking for this trip";
+    $nBook = 0;
     $query = '
       SELECT SUM(seats) 
       FROM users
@@ -171,15 +171,20 @@
       while ($i++ < $n - 1) {
         $currDestination = $stops[$i];
 
-        $bookInfo = getNumberOfBooking($mydb, $currDeparture, $currDestination) . "/" . BUS_SEATS;
         $depClass = 'tableElement';
         $destClass = 'tableElement';
+        $bookInfo = getNumberOfBooking($mydb, $currDeparture, $currDestination) . "/" . BUS_SEATS;
+
+        if ($bookInfo == 0)
+          $bookInfo = $bookInfo .  " - No booking for this trip";
 
         if ($detailsEnabled) {
           $bookInfo = $bookInfo . getBookingDetails($mydb, $currDeparture, $currDestination);
           if ($userStops[0] == $currDeparture) {
             $depClass = 'tableElementCurrent';
-          } else if ($userStops[1] == $currDestination) {
+          }
+
+          if ($userStops[1] == $currDestination) {
             $destClass = 'tableElementCurrent';
           }
         }
