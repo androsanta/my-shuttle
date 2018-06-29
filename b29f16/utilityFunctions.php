@@ -64,7 +64,7 @@
   function printSeats () {
     $i = 0;
 
-    while ($i++ <= BUS_SEATS)
+    while ($i++ < BUS_SEATS)
       echo '<option value="' . $i . '"></option>';
   }
 

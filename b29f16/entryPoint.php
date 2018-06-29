@@ -13,6 +13,7 @@
   * logout - user want to logout 
   * personalPage - view of booking with user details
   */
+  
   $action = "";
   $isLogged = false;
 
